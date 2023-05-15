@@ -1,13 +1,17 @@
 <script setup>
 import { ref, watch } from 'vue'
 import axios from 'axios'
-import { NButton, NInput, darkTheme, NConfigProvider } from 'naive-ui'
+import { NButton, NInput, darkTheme, NConfigProvider, NPopover } from 'naive-ui'
 import { ContentCopyFilled } from '@vicons/material'
 import { Icon } from '@vicons/utils'
 
 const inputUrl = ref('');
 const outputUrl = ref('');
-const buttonDisplay = ref('none')
+const buttonDisplay = ref('none');
+
+function copyText() {
+  navigator.clipboard.writeText(outputUrl.value);
+}
 
 async function shortenURL(source) {
   const url = "https://api.reurl.cc/shorten";
@@ -57,9 +61,14 @@ watch(() => inputUrl.value, () => {
       <div class="result-box">
         <div style="display: flex; flex-wrap: nowrap; justify-content: space-between;">
           <div type="text" size="large">{{ outputUrl }}</div>
-          <Icon class="copy-btn" size="20">
-            <ContentCopyFilled />
-          </Icon>
+          <n-popover trigger="click" :keep-alive-on-hover="false">
+            <template #trigger>
+              <Icon class="copy-btn" size="20" @click="copyText">
+                <ContentCopyFilled />
+              </Icon>
+            </template>
+            <span>複製成功！</span>
+          </n-popover>
         </div>
       </div>
     </div>
@@ -130,7 +139,7 @@ $mobile-width: 600px;
 
 .result-box {
   background-color: rgb(60, 60, 64, 0.5);
-  padding: 10px 5px;
+  padding: 10px;
   font-size: 12pt;
   border-radius: 2px;
 
