@@ -34,7 +34,7 @@ async function shortenURL(source) {
 watch(() => inputUrl.value, () => {
   buttonDisplay.value = 'block';
   requestAnimationFrame(() => {
-    document.querySelector(".changebtn").classList.add('active')
+    document.querySelector("#ChangeBtn").classList.add('active')
   });
 })
 </script>
@@ -44,15 +44,15 @@ watch(() => inputUrl.value, () => {
     <div class="container">
       <div class="title">短網址 · 簡單使用</div>
       <div class="input-area active">
-        <n-input type="text" class="textbar" size="large" placeholder="請輸入網址" v-model:value="inputUrl"></n-input>
-        <div style="text-align: center; padding: 20px 0;">
-          <n-button class="changebtn" size="large" @click="shortenURL(inputUrl)"
+        <n-input type="text" class="text-bar" size="large" placeholder="請輸入網址" v-model:value="inputUrl"></n-input>
+        <div class="btn-wrapper">
+          <n-button id="ChangeBtn" size="large" @click="shortenURL(inputUrl)"
             :style="{ margin: '0 auto' }">縮短網址</n-button>
         </div>
       </div>
 
       <div class="result-box">
-          <div style="display: flex; flex-wrap: nowrap; justify-content: space-between;">
+          <div class="box-wrapper">
             <div type="text" size="large">{{ outputUrl }}</div>
             <n-popover trigger="click" :keep-alive-on-hover="false">
               <template #trigger>
@@ -86,7 +86,6 @@ $mobile-width: 600px;
   }
 }
 
-
 * {
   color: #fff;
 }
@@ -116,9 +115,14 @@ $mobile-width: 600px;
     transform: translateY(0) scale(1);
     transition: transform 0.4s ease-in-out 0s, opacity 0.4s ease-in-out 0s;
   }
+
+  .btn-wrapper {
+    text-align: center; 
+    padding: 20px 0;
+  }
 }
 
-.changebtn {
+#ChangeBtn {
   opacity: 0;
   transform: translateY(-10px) scale(1);
   transition: transform 0.8s ease-in-out 0s, opacity 0.8s ease-in-out 0s;
@@ -144,6 +148,13 @@ $mobile-width: 600px;
     opacity: 1;
     transform: translateY(0) scale(1);
     transition: transform 0.4s ease-in-out 0s, opacity 0.4s ease-in-out 0s;
+  }
+
+  .box-wrapper {
+    display: flex; 
+    flex-wrap: nowrap; 
+    align-items: center;
+    justify-content: space-between;
   }
 }
 
