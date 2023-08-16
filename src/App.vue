@@ -7,36 +7,58 @@ import { fetchReurlUrl } from './API/fetchReurlUrl'
 
 const inputUrl = ref('');
 const outputUrl = ref('');
-const buttonDisplay = ref('none');
 
-function copyText() {
-  navigator.clipboard.writeText(outputUrl.value);
+// 判斷送出按鈕狀態
+const submitButtonDisplay = ref(false);
+
+const copyText = () => {
+  return navigator.clipboard.writeText(outputUrl.value);
 }
 
-async function shortenURL(source) {
+const shortenURL = async(source) => {
   const data = {
     "url": source,
     "utm_source": "FB_AD"
-  }
+  };
   try {
-    const response =  await fetchReurlUrl(data);
+    const response = await fetchReurlUrl(data);
     outputUrl.value = response.short_url;
     document.querySelector('.input-area').classList.remove('active');
-    setTimeout(() => {
-      document.querySelector('.input-area').style.display = 'none';
-      document.querySelector('.result-box').classList.add('active');
-    }, 400)
+    await new Promise(resolve => setTimeout(resolve, 400));
+    document.querySelector('.input-area').style.display = 'none';
+    document.querySelector('.result-area').classList.add('active');
   } catch (error) {
     console.error(error);
   }
 }
 
-watch(() => inputUrl.value, () => {
-  buttonDisplay.value = 'block';
-  requestAnimationFrame(() => {
-    document.querySelector("#ChangeBtn").classList.add('active')
-  });
-})
+const restartUrl = async() => {
+  inputUrl.value = '';
+  
+  await new Promise(resolve => requestAnimationFrame(resolve));
+  document.querySelector('.result-area').classList.remove('active');
+  
+  await new Promise(resolve => setTimeout(resolve, 400));
+  document.querySelector("#SubmitBtn").classList.remove('active');
+  document.querySelector('.input-area').style.display = 'block';
+  
+  await new Promise(resolve => setTimeout(resolve, 100));
+  document.querySelector('.input-area').classList.add('active');
+  
+  submitButtonDisplay.value = false;
+}
+
+watch(
+() => inputUrl.value,
+  async () => {
+    if (!submitButtonDisplay.value) {
+      submitButtonDisplay.value = true;
+      await new Promise(resolve => requestAnimationFrame(resolve));
+      document.querySelector("#SubmitBtn").classList.add('active');
+    }
+  }
+);
+
 </script>
 
 <template>
@@ -46,12 +68,13 @@ watch(() => inputUrl.value, () => {
       <div class="input-area active">
         <n-input type="text" class="text-bar" size="large" placeholder="請輸入網址" v-model:value="inputUrl"></n-input>
         <div class="btn-wrapper">
-          <n-button id="ChangeBtn" size="large" @click="shortenURL(inputUrl)"
+          <n-button id="SubmitBtn" size="large" @click="shortenURL(inputUrl)"
             :style="{ margin: '0 auto' }">縮短網址</n-button>
         </div>
       </div>
 
-      <div class="result-box">
+      <div class="result-area">
+        <div class="result-box">
           <div class="box-wrapper">
             <div type="text" size="large">{{ outputUrl }}</div>
             <n-popover trigger="click" :keep-alive-on-hover="false">
@@ -64,6 +87,10 @@ watch(() => inputUrl.value, () => {
             </n-popover>
           </div>
         </div>
+        <div class="btn-wrapper">
+          <n-button id="RestartBtn" size="large" @click="restartUrl">重新網址</n-button>
+        </div>
+      </div>
     </div>
    
 
@@ -122,7 +149,7 @@ $mobile-width: 600px;
   }
 }
 
-#ChangeBtn {
+#SubmitBtn {
   opacity: 0;
   transform: translateY(-10px) scale(1);
   transition: transform 0.8s ease-in-out 0s, opacity 0.8s ease-in-out 0s;
@@ -134,12 +161,7 @@ $mobile-width: 600px;
   }
 }
 
-.result-box {
-  background-color: rgb(60, 60, 64, 0.5);
-  padding: 10px;
-  font-size: 12pt;
-  border-radius: 2px;
-
+.result-area {
   opacity: 0;
   transform: translateY(-10px) scale(1);
   transition: transform 0.4s ease-in-out 0s, opacity 0.4s ease-in-out 0s;
@@ -150,11 +172,23 @@ $mobile-width: 600px;
     transition: transform 0.4s ease-in-out 0s, opacity 0.4s ease-in-out 0s;
   }
 
-  .box-wrapper {
-    display: flex; 
-    flex-wrap: nowrap; 
-    align-items: center;
-    justify-content: space-between;
+  .result-box {
+    background-color: rgb(60, 60, 64, 0.5);
+    padding: 10px;
+    font-size: 12pt;
+    border-radius: 2px;
+
+    .box-wrapper {
+      display: flex; 
+      flex-wrap: nowrap; 
+      align-items: center;
+      justify-content: space-between;
+    }
+  }
+
+  .btn-wrapper {
+    text-align: center; 
+    padding: 20px 0;
   }
 }
 
