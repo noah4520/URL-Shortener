@@ -1,9 +1,9 @@
 <script setup>
 import { ref, watch } from 'vue'
-import axios from 'axios'
 import { NButton, NInput, darkTheme, NConfigProvider, NPopover } from 'naive-ui'
 import { ContentCopyFilled } from '@vicons/material'
 import { Icon } from '@vicons/utils'
+import { fetchReurlUrl } from './API/fetchReurlUrl'
 
 const inputUrl = ref('');
 const outputUrl = ref('');
@@ -14,20 +14,13 @@ function copyText() {
 }
 
 async function shortenURL(source) {
-  const url = "https://api.reurl.cc/shorten";
   const data = {
     "url": source,
     "utm_source": "FB_AD"
   }
-  const headers = {
-    'Content-Type': 'application/json',
-    'reurl-api-key': '4070ff49d794e13d18543b663c974755ecd1b537909804df8a38b58d65165567c4f5d6'
-  };
-  console.log(data);
-
   try {
-    const response = await axios.post(url, data, { headers });
-    outputUrl.value = response.data.short_url;
+    const response =  await fetchReurlUrl(data);
+    outputUrl.value = response.short_url;
     document.querySelector('.input-area').classList.remove('active');
     setTimeout(() => {
       document.querySelector('.input-area').style.display = 'none';
@@ -54,25 +47,25 @@ watch(() => inputUrl.value, () => {
         <n-input type="text" class="textbar" size="large" placeholder="請輸入網址" v-model:value="inputUrl"></n-input>
         <div style="text-align: center; padding: 20px 0;">
           <n-button class="changebtn" size="large" @click="shortenURL(inputUrl)"
-            :style="{ display: buttonDisplay, margin: '0 auto' }">縮短網址</n-button>
+            :style="{ margin: '0 auto' }">縮短網址</n-button>
         </div>
       </div>
 
       <div class="result-box">
-        <div style="display: flex; flex-wrap: nowrap; justify-content: space-between;">
-          <div type="text" size="large">{{ outputUrl }}</div>
-          <n-popover trigger="click" :keep-alive-on-hover="false">
-            <template #trigger>
-              <Icon class="copy-btn" size="20" @click="copyText">
-                <ContentCopyFilled />
-              </Icon>
-            </template>
-            <span>複製成功！</span>
-          </n-popover>
+          <div style="display: flex; flex-wrap: nowrap; justify-content: space-between;">
+            <div type="text" size="large">{{ outputUrl }}</div>
+            <n-popover trigger="click" :keep-alive-on-hover="false">
+              <template #trigger>
+                <Icon class="copy-btn" size="20" @click="copyText">
+                  <ContentCopyFilled />
+                </Icon>
+              </template>
+              <span>複製成功！</span>
+            </n-popover>
+          </div>
         </div>
-      </div>
     </div>
-
+   
 
   </n-config-provider>
 </template>
