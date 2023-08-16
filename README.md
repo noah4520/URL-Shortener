@@ -2,7 +2,7 @@
 
 短網址產生器
 
-串接reurl.cc的API並回傳短網址連結
+串接 **reurl.cc** 的API並回傳短網址連結
 
 View site：https://uhikochen.github.io/URL-Shortener/
 
