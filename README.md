@@ -4,7 +4,7 @@
 
 串接 **reurl.cc** 的API並回傳短網址連結
 
-View site：https://uhikochen.github.io/URL-Shortener/
+View site：https://noah4520.github.io/URL-Shortener/
 
 ## Project Setup
 
