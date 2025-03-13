@@ -3,7 +3,7 @@ import { ref, watch } from 'vue'
 import { NButton, NInput, darkTheme, NConfigProvider, NPopover } from 'naive-ui'
 import { ContentCopyFilled } from '@vicons/material'
 import { Icon } from '@vicons/utils'
-import { fetchReurlUrl } from './API/fetchReurlUrl'
+import { fetchReurlUrl } from './api/fetchReurlUrl'
 
 const inputUrl = ref('');
 const outputUrl = ref('');
